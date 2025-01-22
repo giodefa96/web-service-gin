@@ -8,12 +8,37 @@ import (
 	"os"
 	"time"
 
-	"github.com/golang-jwt/jwt/v4"
+	"example/web-service-gin/service"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 var jwtSecret = []byte(os.Getenv("JWT_SECRET"))
+
+type UserHandler struct {
+	UserService *service.UserService
+}
+
+func NewUserHandler(userService *service.UserService) *UserHandler {
+	return &UserHandler{UserService: userService}
+}
+
+func (h *UserHandler) CreateUser(c *gin.Context) {
+	var user models.User
+	if err := c.BindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err := h.UserService.CreateUser(&user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusCreated, user)
+}
 
 // Struttura richiesta Login
 type LoginRequest struct {
@@ -46,7 +71,7 @@ func CreateUser(c *gin.Context) {
 	}
 
 	result := database.DB.Create(&user)
-	if result.Error != nil {
+	if result != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
 		return
 	}

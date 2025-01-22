@@ -9,7 +9,8 @@ type User struct {
 	gorm.Model
 	Name     string `json:"name" gorm:"size:100;not null"`
 	Email    string `json:"email" gorm:"size:100;unique;not null"`
-	Password string `json:"-" gorm:"type:varchar(255);not null"` // Assicuriamo spazio sufficiente
+	Password string `json:"-" gorm:"type:varchar(255);not null"`
+	Cart     Cart   `json:"cart" gorm:"constraint:OnDelete:CASCADE;"`
 }
 
 // Funzione per hashare la password

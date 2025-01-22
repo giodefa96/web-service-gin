@@ -8,11 +8,11 @@ import (
 )
 
 // SetupUserRoutes configura le rotte per gli utenti
-func SetupUserRoutes(r *gin.Engine) {
+func SetupUserRoutes(r *gin.Engine, userHandler *controllers.UserHandler) {
 	// Rotte di autenticazione
 	r.POST("/register", controllers.Register)
 	r.POST("/login", controllers.Login)
-
+	r.POST("/CreateUser", userHandler.CreateUser)
 	// Rotte protette
 	protected := r.Group("/")
 	protected.Use(middleware.AuthMiddleware())

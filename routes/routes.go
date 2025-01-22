@@ -1,13 +1,14 @@
 package routes
 
 import (
+	"example/web-service-gin/controllers"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 // SetupRouter configura tutte le rotte
-func SetupRouter(r *gin.Engine) {
+func SetupRouter(r *gin.Engine, cartHandler *controllers.CartHandler, userHandler *controllers.UserHandler) {
 	// Servire i file statici (CSS, JS)
 	r.Static("/static", "./static")
 
@@ -28,6 +29,7 @@ func SetupRouter(r *gin.Engine) {
 	})
 
 	// Includi le rotte separate
-	SetupUserRoutes(r)
+	SetupUserRoutes(r, userHandler)
 	SetupAlbumRoutes(r)
+	SetupCartRoutes(r, cartHandler)
 }
