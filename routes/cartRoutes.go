@@ -6,10 +6,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// SetupAlbumRoutes configura le rotte per gli album
-func SetupCartRoutes(r *gin.Engine, cartHandler *controllers.CartHandler) {
+// SetupCartRoutes configura le rotte per il carrello
+func SetupCartRoutes(r *gin.Engine) {
+	cartHandler := controllers.NewCartHandler() // Creiamo un'istanza di CartHandler
+
 	cartGroup := r.Group("/cart")
 	{
-		cartGroup.POST("/:user_id/:product_id/:quantity", cartHandler.AddItem) // ✅ Percorso corretto
+		cartGroup.POST("/:user_id/:product_id/:quantity", cartHandler.AddItem) // Usiamo il metodo dell'istanza
 	}
 }

@@ -8,13 +8,14 @@ import (
 )
 
 // SetupUserRoutes configura le rotte per gli utenti
-func SetupUserRoutes(r *gin.Engine, userHandler *controllers.UserHandler) {
+// SetupUserRoutes configura le rotte per gli utenti
+func SetupUserRoutes(r *gin.Engine) {
+	userHandler := controllers.NewUserHandler() // Creiamo un'istanza di UserHandler
+
 	// Rotte di autenticazione
-	r.POST("/register", controllers.Register)
-	r.POST("/login", controllers.Login)
-	r.POST("/CreateUser", userHandler.CreateUser)
+	r.POST("/CreateUser", userHandler.CreateUser) // Utilizziamo il metodo dell'istanza
+
 	// Rotte protette
 	protected := r.Group("/")
 	protected.Use(middleware.AuthMiddleware())
-	protected.GET("/profile", controllers.GetUserProfile) // supponiamo tu abbia una funzione `GetUserProfile`
 }
