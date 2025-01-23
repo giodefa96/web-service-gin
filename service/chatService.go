@@ -69,6 +69,8 @@ func ChatStream(message string) (chan string, error) {
 	return responseChannel, nil
 }
 
+//func SummarizeChatCompletion( )
+
 // func ChatStream(message string) <-chan string {
 // 	responseChannel := make(chan string)
 

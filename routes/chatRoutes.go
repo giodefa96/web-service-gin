@@ -11,5 +11,6 @@ func SetupChatCompletionRoutes(r *gin.Engine) {
 	{
 		chatGroup.POST("/", controllers.ChatCompletion)
 		chatGroup.POST("/stream", controllers.StreamChatCompletion)
+		chatGroup.POST("/summarize", controllers.SummarizeChatCompletion)
 	}
 }

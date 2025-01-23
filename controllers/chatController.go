@@ -3,6 +3,7 @@ package controllers
 import (
 	"example/web-service-gin/service"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -16,6 +17,11 @@ type MessageRequest struct {
 
 // Struttura per la risposta
 type ChatResponse struct {
+	Response string `json:"response"`
+}
+
+// Struttura per il corso della risposta file txt
+type ChatResponseFile struct {
 	Response string `json:"response"`
 }
 
@@ -77,4 +83,32 @@ func StreamChatCompletion(c *gin.Context) {
 	}
 
 	log.Println("Stream completato")
+}
+
+func SummarizeChatCompletion(c *gin.Context) {
+	file, err := c.FormFile("file")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Errore nel file upload"})
+		return
+	}
+	// Apri il file
+	f, err := file.Open()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Errore nell'apertura del file"})
+		return
+	}
+	defer f.Close()
+
+	// Leggi il contenuto del file
+	content, err := ioutil.ReadAll(f)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Errore nella lettura del file"})
+		return
+	}
+
+	// Converti i byte in stringa
+	text := string(content)
+
+	_ = text
+
 }
