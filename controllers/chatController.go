@@ -3,7 +3,6 @@ package controllers
 import (
 	"example/web-service-gin/service"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -91,24 +90,35 @@ func SummarizeChatCompletion(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Errore nel file upload"})
 		return
 	}
-	// Apri il file
-	f, err := file.Open()
+	// passa il file al servizio
+	response, err := service.SummarizeChatCompletion(file)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Errore nell'apertura del file"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Errore nella generazione del riassunto"})
 		return
 	}
-	defer f.Close()
+	_ = response
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "Errore nel file upload"})
+	// 	return
+	// }
+	// // Apri il file
+	// f, err := file.Open()
+	// if err != nil {
+	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Errore nell'apertura del file"})
+	// 	return
+	// }
+	// defer f.Close()
 
-	// Leggi il contenuto del file
-	content, err := ioutil.ReadAll(f)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Errore nella lettura del file"})
-		return
-	}
+	// // Leggi il contenuto del file
+	// content, err := ioutil.ReadAll(f)
+	// if err != nil {
+	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Errore nella lettura del file"})
+	// 	return
+	// }
 
-	// Converti i byte in stringa
-	text := string(content)
+	// // Converti i byte in stringa
+	// text := string(content)
 
-	_ = text
+	// _ = text
 
 }

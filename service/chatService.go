@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"log"
+	"mime/multipart"
 	"os"
 
 	"github.com/tmc/langchaingo/llms"
@@ -68,8 +69,10 @@ func ChatStream(message string) (chan string, error) {
 
 	return responseChannel, nil
 }
-
-//func SummarizeChatCompletion( )
+func SummarizeChatCompletion(file *multipart.FileHeader) (string, error) {
+	// Implementazione della funzione
+	return "nil", nil
+}
 
 // func ChatStream(message string) <-chan string {
 // 	responseChannel := make(chan string)
