@@ -96,29 +96,7 @@ func SummarizeChatCompletion(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Errore nella generazione del riassunto"})
 		return
 	}
-	_ = response
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "Errore nel file upload"})
-	// 	return
-	// }
-	// // Apri il file
-	// f, err := file.Open()
-	// if err != nil {
-	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Errore nell'apertura del file"})
-	// 	return
-	// }
-	// defer f.Close()
-
-	// // Leggi il contenuto del file
-	// content, err := ioutil.ReadAll(f)
-	// if err != nil {
-	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Errore nella lettura del file"})
-	// 	return
-	// }
-
-	// // Converti i byte in stringa
-	// text := string(content)
-
-	// _ = text
+	// Restituisce la risposta generata dal modello
+	c.JSON(http.StatusOK, ChatResponse{Response: response})
 
 }

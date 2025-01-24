@@ -2,12 +2,17 @@ package service
 
 import (
 	"context"
+	"io"
 	"log"
 	"mime/multipart"
 	"os"
+	"strings"
 
+	"github.com/tmc/langchaingo/chains"
+	"github.com/tmc/langchaingo/documentloaders"
 	"github.com/tmc/langchaingo/llms"
 	"github.com/tmc/langchaingo/llms/mistral"
+	"github.com/tmc/langchaingo/textsplitter"
 )
 
 // Recupera la chiave API di Mistral dall'ambiente
@@ -71,35 +76,38 @@ func ChatStream(message string) (chan string, error) {
 }
 func SummarizeChatCompletion(file *multipart.FileHeader) (string, error) {
 	// Implementazione della funzione
-	return "nil", nil
+	f, err := file.Open()
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+
+	// Leggi il contenuto del file
+	content, err := io.ReadAll(f)
+	if err != nil {
+		return "", err
+	}
+	text := string(content)
+	ctx := context.Background()
+	// Inizializza il modello Mistral
+	llm, err := mistral.New(mistral.WithModel("mistral-large-latest"), mistral.WithAPIKey(mistralAPIKey))
+	if err != nil {
+		log.Println("Errore nella creazione del modello Mistral:", err)
+		return "", err
+	}
+
+	llmSummarizationChain := chains.LoadRefineSummarization(llm)
+	docs := documentloaders.NewText(strings.NewReader(text))
+	docsNew, err := docs.LoadAndSplit(ctx,
+		textsplitter.NewRecursiveCharacter(),
+	)
+	if err != nil {
+		return "", err
+	}
+	outputValues, err := chains.Call(ctx, llmSummarizationChain, map[string]any{"input_documents": docsNew})
+	if err != nil {
+		return "", err
+	}
+	out := outputValues["text"].(string)
+	return out, nil
 }
-
-// func ChatStream(message string) <-chan string {
-// 	responseChannel := make(chan string)
-
-// 	go func() {
-// 		defer close(responseChannel) // Chiude il canale al termine dello streaming
-
-// 		ctx := context.Background()
-// 		llm, err := mistral.New(mistral.WithModel("open-mistral-7b"), mistral.WithAPIKey(mistralAPIKey))
-// 		if err != nil {
-// 			log.Println("Errore nell'inizializzazione del modello:", err)
-// 			return
-// 		}
-
-// 		// Avvia la generazione della risposta con streaming
-// 		_, err = llms.GenerateFromSinglePrompt(ctx, llm, message,
-// 			llms.WithTemperature(0.8),
-// 			llms.WithStreamingFunc(func(ctx context.Context, chunk []byte) error {
-// 				responseChannel <- string(chunk) // Invia il chunk al canale
-// 				return nil
-// 			}),
-// 		)
-
-// 		if err != nil {
-// 			log.Println("Errore durante lo streaming:", err)
-// 		}
-// 	}()
-
-// 	return responseChannel
-// }

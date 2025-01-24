@@ -14,6 +14,7 @@ func SetupUserRoutes(r *gin.Engine) {
 
 	// Rotte di autenticazione
 	r.POST("/CreateUser", userHandler.CreateUser) // Utilizziamo il metodo dell'istanza
+	r.POST("/Login", userHandler.Login)
 
 	// Rotte protette
 	protected := r.Group("/")

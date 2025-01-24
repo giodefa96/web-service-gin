@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 
+	"example/web-service-gin/dto"
 	"example/web-service-gin/models"
 	"example/web-service-gin/service"
 
@@ -11,6 +12,11 @@ import (
 )
 
 var jwtSecret = []byte(os.Getenv("JWT_SECRET"))
+
+type LoginUser struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
 
 type UserHandler struct {
 	UserService *service.UserService
@@ -29,7 +35,6 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
 	err := h.UserService.CreateUser(&user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -37,4 +42,18 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, user)
+}
+
+func (h *UserHandler) Login(c *gin.Context) {
+	var user dto.LoginUser
+	if err := c.BindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	err := h.UserService.Login(&user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
 }

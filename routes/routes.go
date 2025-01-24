@@ -26,7 +26,7 @@ func SetupRouter(r *gin.Engine) {
 	// })
 
 	// Includi le rotte separate
-	// SetupUserRoutes(r)
+	SetupUserRoutes(r)
 	// SetupAlbumRoutes(r)
 	// SetupCartRoutes(r)
 	SetupChatCompletionRoutes(r)
