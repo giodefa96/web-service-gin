@@ -47,33 +47,33 @@ func (s *UserService) CreateUser(user *models.User) error {
 	return s.UserRepo.CreateUser(user)
 }
 
-func (s *UserService) Login(userLogin *dto.LoginUser) error {
+// func (s *UserService) Login(userLogin *dto.LoginUser) error {
+// 	user, err := s.UserRepo.GetUserByEmail(userLogin.Email)
+// 	if err != nil {
+// 		return err // Restituisci l'errore se l'utente non viene trovato
+// 	}
+// 	match := utils.VerifyPassword(userLogin.Password, user.Password)
+// 	if !match {
+// 		return errors.New("invalid credentials") // Restituisci un errore se la password è errata
+// 	}
+// 	return nil // Login riuscito, nessun errore
+// }
+
+func (s *UserService) Login(userLogin *dto.LoginUser) (string, error) {
 	user, err := s.UserRepo.GetUserByEmail(userLogin.Email)
 	if err != nil {
-		return err // Restituisci l'errore se l'utente non viene trovato
+		return "", err // Restituisci l'errore se l'utente non viene trovato
 	}
+
 	match := utils.VerifyPassword(userLogin.Password, user.Password)
 	if !match {
-		return errors.New("invalid credentials") // Restituisci un errore se la password è errata
+		return "", errors.New("invalid credentials") // Restituisci un errore se la password è errata
 	}
-	return nil // Login riuscito, nessun errore
+
+	token, err := utils.CreateToken(userLogin.Email) // Funzione per generare un JWT
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil // Restituisce il token se il login è corretto
 }
-
-// func (s *UserService) Login(userLogin dto.LoginUser) (string, error) {
-//     user, err := s.UserRepo.GetUserByEmail(userLogin.Email)
-//     if err != nil {
-//         return "", err // Restituisci l'errore se l'utente non viene trovato
-//     }
-
-//     match := utils.VerifyPassword(userLogin.Password, user.Password)
-//     if !match {
-//         return "", errors.New("invalid credentials") // Restituisci un errore se la password è errata
-//     }
-
-//     token, err := utils.GenerateJWT(user) // Funzione per generare un JWT
-//     if err != nil {
-//         return "", err
-//     }
-
-//     return token, nil // Restituisce il token se il login è corretto
-// }
