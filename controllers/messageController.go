@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"example/web-service-gin/dto"
 	"example/web-service-gin/service"
 	"net/http"
 
@@ -8,7 +9,12 @@ import (
 )
 
 func PostMessage(c *gin.Context) {
-	err := service.PublishJob()
+	var body dto.Body
+	if err := c.BindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	err := service.PublishJob(&body)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return // Ensure the function exits after sending the error response

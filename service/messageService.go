@@ -2,11 +2,12 @@ package service
 
 import (
 	"example/web-service-gin/amqp"
+	"example/web-service-gin/dto"
 	"log"
 )
 
-func PublishJob() error {
-	err := amqp.PublishJob()
+func PublishJob(body *dto.Body) error {
+	err := amqp.PublishJob(body)
 	if err != nil {
 		return err
 	}

@@ -2,6 +2,7 @@ package amqp
 
 import (
 	"context"
+	"example/web-service-gin/dto"
 	"fmt"
 	"log"
 	"time"
@@ -23,7 +24,7 @@ func connectRabbitMQ() (*amqp.Connection, *amqp.Channel, error) {
 	return conn, ch, nil
 }
 
-func PublishJob() error {
+func PublishJob(body *dto.Body) error {
 	conn, ch, err := connectRabbitMQ()
 	if err != nil {
 		return err
@@ -31,7 +32,14 @@ func PublishJob() error {
 	defer conn.Close()
 	defer ch.Close()
 
-	q, err := ch.QueueDeclare("test_queue", false, false, false, false, nil)
+	q, err := ch.QueueDeclare(
+		"task_queue", // name
+		true,         // durable
+		false,        // delete when unused
+		false,        // exclusive
+		false,        // no-wait
+		nil,          // arguments
+	)
 	if err != nil {
 		return err
 	}
@@ -39,15 +47,15 @@ func PublishJob() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	body := "Hello World!"
 	err = ch.PublishWithContext(ctx,
 		"",     // exchange
 		q.Name, // routing key
 		false,  // mandatory
 		false,  // immediate
 		amqp.Publishing{
-			ContentType: "text/plain",
-			Body:        []byte(body),
+			DeliveryMode: amqp.Persistent,
+			ContentType:  "text/plain",
+			Body:         []byte(body.Message),
 		})
 	if err != nil {
 		return err
@@ -65,7 +73,7 @@ func StartReceiver() error {
 	defer ch.Close()
 
 	q, err := ch.QueueDeclare(
-		"test_queue", // name
+		"task_queue", // name
 		false,        // durable
 		false,        // delete when unused
 		false,        // exclusive
