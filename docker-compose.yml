@@ -10,3 +10,13 @@ services:
       MYSQL_DATABASE: mydatabase
     ports:
       - "3306:3306"
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq_container
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672" # Porta AMQP
+      - "15672:15672" # Porta di gestione (UI)
