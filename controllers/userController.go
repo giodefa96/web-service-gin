@@ -59,3 +59,15 @@ func (h *UserHandler) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, token)
 
 }
+
+// GetUserByID gestisce la richiesta di un utente per ID
+func (h *UserHandler) GetUserByID(c *gin.Context) {
+	id := c.Param("id")
+	user, err := h.UserService.GetUserByID(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, user)
+}

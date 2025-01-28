@@ -20,9 +20,9 @@ func (r *UserRepository) GetUsers() ([]models.User, error) {
 	return users, err
 }
 
-func (r *UserRepository) GetUserByID(id uint) (*models.User, error) {
+func (r *UserRepository) GetUserByID(id string) (*models.User, error) {
 	var user models.User
-	err := r.DB.First(&user, id).Error
+	err := r.DB.Preload("Pets").First(&user, id).Error
 	return &user, err
 }
 

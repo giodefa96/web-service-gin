@@ -19,4 +19,8 @@ func SetupUserRoutes(r *gin.Engine) {
 	// Rotte protette
 	protected := r.Group("/")
 	protected.Use(middleware.AuthMiddleware())
+	{
+		protected.GET("/user/:id", userHandler.GetUserByID)
+
+	}
 }

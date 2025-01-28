@@ -28,7 +28,7 @@ func ConnectDatabase() {
 	}
 
 	// Migrazioni automatiche
-	err = DB.AutoMigrate(&models.User{}, &models.Album{}, &models.Cart{}, &models.CartItem{})
+	err = DB.AutoMigrate(&models.User{}, &models.Album{}, &models.Cart{}, &models.CartItem{}, &models.Pet{})
 	if err != nil {
 		log.Fatal("Errore durante le migrazioni:", err)
 	}

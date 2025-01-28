@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"io"
 	"log"
 	"mime/multipart"
@@ -24,7 +25,7 @@ func ChatCompletion(message string) (string, error) {
 	llm, err := mistral.New(mistral.WithModel("mistral-large-latest"), mistral.WithAPIKey(mistralAPIKey))
 	if err != nil {
 		log.Println("Errore nella creazione del modello Mistral:", err)
-		return "", err
+		return "", errors.New("failed to initialize Mistral model")
 	}
 
 	ctx := context.Background()
@@ -36,7 +37,7 @@ func ChatCompletion(message string) (string, error) {
 	)
 	if err != nil {
 		log.Println("Errore nella generazione della risposta:", err)
-		return "", err
+		return "", err // Ritorna l'errore direttamente
 	}
 
 	// Ritorna la risposta generata

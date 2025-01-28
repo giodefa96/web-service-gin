@@ -29,6 +29,7 @@ func SetupRouter(r *gin.Engine) {
 	SetupUserRoutes(r)
 	// SetupAlbumRoutes(r)
 	// SetupCartRoutes(r)
+	SetupPetRoutes(r)
 	SetupChatCompletionRoutes(r)
 	SetupMessageRoutes(r)
 }

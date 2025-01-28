@@ -33,7 +33,7 @@ func (s *UserService) GetUsers() ([]models.User, error) {
 }
 
 // GetUserByID restituisce un utente per ID
-func (s *UserService) GetUserByID(id uint) (*models.User, error) {
+func (s *UserService) GetUserByID(id string) (*models.User, error) {
 	return s.UserRepo.GetUserByID(id)
 }
 

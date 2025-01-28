@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -34,10 +35,28 @@ func ChatCompletion(c *gin.Context) {
 		return
 	}
 
-	// Chiama il servizio di chat per generare una risposta
+	// Chiama il service di chat per generare una risposta
 	response, err := service.ChatCompletion(req.Message)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate response"})
+		// Determinare il codice HTTP basandosi sul messaggio di errore
+		statusCode := http.StatusInternalServerError
+		errorMessage := "An unexpected error occurred"
+
+		if strings.Contains(err.Error(), "400 Bad Request") {
+			statusCode = http.StatusBadRequest
+			errorMessage = "Invalid request: check input message"
+		} else if strings.Contains(err.Error(), "Failed to initialize Mistral model") {
+			statusCode = http.StatusServiceUnavailable
+			errorMessage = "Mistral model is currently unavailable"
+		} else if strings.Contains(err.Error(), "Failed to generate response") {
+			errorMessage = "Error generating response from AI model"
+		}
+
+		// Loggare l'errore dettagliato per debugging
+		fmt.Println("Errore nel controller:", err)
+
+		// Restituire la risposta con il codice HTTP adeguato
+		c.JSON(statusCode, gin.H{"error": errorMessage})
 		return
 	}
 

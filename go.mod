@@ -9,6 +9,7 @@ require (
 	github.com/rabbitmq/amqp091-go v1.10.0
 	github.com/tmc/langchaingo v0.1.12
 	golang.org/x/crypto v0.32.0
+	golang.org/x/time v0.5.0
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/gorm v1.25.12
 )

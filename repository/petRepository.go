@@ -22,7 +22,7 @@ func (r *PetRepository) GetPets() ([]models.Pet, error) {
 
 func (r *PetRepository) GetPetByID(id string) (*models.Pet, error) {
 	var pet models.Pet
-	err := r.DB.First(&pet, id).Error
+	err := r.DB.Preload("User").First(&pet, id).Error
 	return &pet, err
 }
 
